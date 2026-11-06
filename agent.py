@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchrl.data import ReplayBuffer, ListStorage
+from torchrl.data import ReplayBuffer, LazyTensorStorage
 import random
 
 class NeuralNetwork(nn.Module):
@@ -58,13 +58,13 @@ class Agent:
         next_obs = transitions['next_obs']
         dones = transitions['is_done'].bool()
 
-        q_pred = self.nn(obs).gather(1, actions).squeeze(1)
+        q_preds = self.nn(obs).gather(1, actions).squeeze(1)
 
         with torch.no_grad():
-            next_q = self.nn(next_obs).max()
+            next_q = self.nn(next_obs).max(dim=1).values
             q_targets = rewards + (~dones).float() * (self.gamma * next_q)
 
-        loss = F.smooth_l1_loss(q_pred, q_targets)
+        loss = F.smooth_l1_loss(q_preds, q_targets)
         self.optim.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm(self.nn.parameters(), max_norm=10.0)

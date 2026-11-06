@@ -13,7 +13,7 @@ The Deep Q-Network (DQN) algorithm typically adds additional enhancements, like 
 ## Installation
 
 ### Step 1: Install Miniconda
-Download and install Miniconda from [here][https://www.anaconda.com/download/success?reg=skipped-miniconda]
+Download and install Miniconda from https://www.anaconda.com/download/success?reg=skipped-miniconda
 If you are using Linux, you should be able to install it instead through your distro's package manager
 
 ### Step 2: Set up Conda environment and install packages
@@ -25,10 +25,10 @@ python -m pip install pip
 pip install torch torchrl tensordict tensorboard "gym[box2d]"
 ```
 
-### Step 4: Install Git (Windows Only, Linux comes with Git by default)
-You can install git from [here][https://git-scm.com/install/windows]
+### Step 3: Install Git (Windows Only, Linux comes with Git by default)
+You can install git from https://git-scm.com/install/windows
 
-### Step 3: Clone the repo
+### Step 4: Clone the repo
 If you are on Windows, you will need to use the Git Bash terminal.
 ```
 git clone https://github.com/mjessey/lunar-lander.git
