@@ -21,7 +21,7 @@ In a terminal (Anaconda Prompt if using Windows)
 ```
 conda create -n lunar-lander-env python=3.12
 conda activate lunar-lander-env
-python -m pip install pip
+python -m pip install --upgrade pip
 pip install torch torchrl tensordict tensorboard "gym[box2d]"
 ```
 
