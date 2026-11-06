@@ -37,13 +37,14 @@ class Agent:
         self.eps = 0.1
 
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.rb = ReplayBuffer(storage=ListStorage(rb_len))
+        self.rb = ReplayBuffer(storage=LazyTensorStorage(rb_len, device=self.device))
 
     def select_action(self, obs: torch.Tensor) -> int:
         if random.random() < self.eps:
             return random.randint(0, self.n_actions - 1)
 
-        return int(torch.argmax(self.nn.forward(obs)))
+        with torch.no_grad():
+            return self.nn.forward(obs).argmax().item()
 
     def update(self) -> None:
         if len(self.rb) < self.batch_size:
