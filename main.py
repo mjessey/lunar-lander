@@ -4,14 +4,15 @@ from tensordict import TensorDict
 
 from agent import Agent
 
-N_EPISODES = 1000
+N_EPISODES = 200
 
-def run_episode(env: gym.Env, agent: Agent) -> float:
+def run_episode(env: gym.Env, agent: Agent) -> tuple[int, float]:
     """Runs a single episode"""
 
     # Reset environment for new episode
     obs, _ = env.reset()
     is_episode_done = False
+    steps = 0
     total_reward = 0
 
     # Loops until lander lands successfully (termination),
@@ -43,25 +44,31 @@ def run_episode(env: gym.Env, agent: Agent) -> float:
 
         obs = next_obs
         is_episode_done = is_terminated or is_truncated
+        steps += 1
         total_reward += reward
 
-    return total_reward
+    return (steps, total_reward)
 
 def main() -> None:
     # Initialize environment and agent
-    env = gym.make('LunarLander-v3')
+    env = gym.make('LunarLander-v3', render_mode='human')
     agent = Agent(n_obs=8,
                   n_actions=4,
                   rb_len=1e5,
                   batch_size=64,
                   gamma=0.99,
                   lr=1e-3,
+                  eps_decay=0.9999,
+                  seed_steps=1000,
+                  sync_freq=100,
                   )
 
-    # Training for N_EPISODES episodes and printing stats
+    # Train for N_EPISODES episodes, printing stats after each episode
+    total_steps = 0
     for episode in range(N_EPISODES):
-        reward = run_episode(env, agent)
-        print(f"Episode {episode + 1}\t Reward: {round(reward, 2)}\t Success: {reward>=200}")
+        episode_steps, reward = run_episode(env, agent)
+        total_steps += episode_steps
+        print(f"Episode {episode + 1}\t Reward: {round(reward, 2)} \t Total Steps={total_steps}\t Eps: {round(agent.eps, 2)}\t Success: {reward>=200}")
 
 if __name__ == '__main__':
     main()
